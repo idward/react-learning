@@ -4,8 +4,8 @@
 /node_modules
 
 # IDEs and editors
-/.idea
-.idea/workspace.xml
+/.idea/*
+.idea/*
 .project
 .classpath
 .c9/

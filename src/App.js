@@ -61,11 +61,11 @@ class Widget extends Component {
 
 class Wrapper extends Component {
     mount() {
-        ReactDOM.render(<App />, document.getElementById('a'));
+        ReactDOM.render(<App />, document.getElementById('b'));
     }
 
     unmount() {
-        ReactDOM.unmountComponentAtNode(document.getElementById('a'));
+        ReactDOM.unmountComponentAtNode(document.getElementById('b'));
     }
 
     render() {
@@ -73,7 +73,7 @@ class Wrapper extends Component {
             <div>
                 <button onClick={this.mount.bind(this)}>Mount</button>
                 <button onClick={this.unmount.bind(this)}>Unmount</button>
-                <div id="a"></div>
+                <div id="b"></div>
             </div>
         )
     }

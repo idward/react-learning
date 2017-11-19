@@ -5,12 +5,8 @@ import PropTypes from 'prop-types';
 class App extends Component {
     constructor() {
         super();
-        this.state = {
-            txt: 'this is the state txt',
-            a: '',
-            b: '',
-            val: 0
-        }
+        this.state = {txt: 'this is the state txt', a: '', b: '', val: 0, increasing: false};
+        this.update = this.update.bind(this);
     }
 
     update(e) {
@@ -21,33 +17,79 @@ class App extends Component {
             b: this.refs.b.value,
             val: this.state.val + 1
         });
+
+        ReactDOM.render(<App value={this.props.value + 1}/>, document.getElementById('b'));
     }
 
+    /**
+     * 组件接收Props属性
+     * @param nextProps
+     */
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.value > this.props.value) {
+            this.setState({increasing: true});
+        }
+    }
+
+    /**
+     *  组件是否升级（渲染）
+     * @param nextProps
+     * @param nextState
+     * @returns {boolean}
+     */
+    shouldComponentUpdate(nextProps, nextState) {
+        return nextProps.value % 5 === 0;
+    }
+
+    /**
+     *  组件将要加载
+     */
     componentWillMount() {
         console.log('componentWillMount');
-    }
-
-    componentDidMount() {
-        console.log('componentDidMount');
+        this.setState({m: 2})
     }
 
     render() {
         console.log('render');
+        console.log(this.state.increasing);
         return (
             <div>
-                <input ref={node => this.a = node} type="text" onChange={this.update.bind(this)}/>{this.state.a} <br/>
-                <input ref="b" type="text" onChange={this.update.bind(this)}/>{this.state.b}
+                <input ref={node => this.a = node} type="text" onChange={this.update}/>{this.state.a} <br/>
+                <input ref="b" type="text" onChange={this.update}/>{this.state.b}
                 <h1>{this.state.txt}</h1>
                 <b>{this.props.cat}</b> <br/>
-                <Widget ref={component => this.c = component} update={this.update.bind(this)}/> <br/>
+                <Widget ref={component => this.c = component} update={this.update}/> <br/>
                 <Button text={2}>&hearts; React</Button> <br/>
-                <button onClick={this.update.bind(this)}>{this.state.val}</button>
+                {/*<button onClick={this.update}>{this.state.val * this.state.m}</button>*/}
+                <button onClick={this.update}>{this.props.value}</button>
             </div>
         );
     }
 
+    /**
+     *  组件加载完毕
+     */
+    componentDidMount() {
+        console.log('componentDidMount');
+        console.log(ReactDOM.findDOMNode(this));
+        // this.inc = setInterval(this.update, 500);
+    }
+
+    /**
+     * 组件升级完毕
+     * @param prevProps
+     * @param prevState
+     */
+    componentDidUpdate(prevProps, prevState) {
+        console.log(`prevProps: ${prevProps.value}`);
+    }
+
+    /**
+     * 组件卸载
+     */
     componentWillUnmount() {
         console.log('componentWillUnmount');
+        // clearInterval(this.inc);
     }
 }
 
@@ -108,7 +150,8 @@ App.propTypes = {
 
 App.defaultProps = {
     txt: 'Hello World!',
-    cat: 3
+    cat: 3,
+    value: 0
 }
 
 export default Wrapper;

@@ -5,8 +5,13 @@ import PropTypes from 'prop-types';
 class App extends Component {
     constructor() {
         super();
-        this.state = {txt: 'this is the state txt', a: '', b: '', val: 0, increasing: false};
+        this.state = {txt: 'this is the state txt', a: '', b: '', val: 0, increasing: false, items: []};
         this.update = this.update.bind(this);
+        this.filter = this.filter.bind(this);
+    }
+
+    filter(e) {
+        this.setState({filter: e.target.value});
     }
 
     update(e) {
@@ -46,22 +51,36 @@ class App extends Component {
      */
     componentWillMount() {
         console.log('componentWillMount');
-        this.setState({m: 2})
+        // this.setState({m: 2});
+        fetch('https://swapi.co/api/people/?format=json')
+            .then(response => response.json())
+            .then(({results:items}) => {
+                this.setState({items})
+            });
     }
 
     render() {
         console.log('render');
         console.log(this.state.increasing);
+        let items = this.state.items;
+
+        if(this.state.filter){
+            items = items.filter(item => item.name.toLowerCase().includes(this.state.filter.toLowerCase()));
+        }
         return (
             <div>
-                <input ref={node => this.a = node} type="text" onChange={this.update}/>{this.state.a} <br/>
-                <input ref="b" type="text" onChange={this.update}/>{this.state.b}
+                {/*<input ref={node => this.a = node} type="text" onChange={this.update}/>{this.state.a} <br/>*/}
+                {/*<input ref="b" type="text" onChange={this.update}/>{this.state.b}*/}
                 <h1>{this.state.txt}</h1>
                 <b>{this.props.cat}</b> <br/>
                 <Widget ref={component => this.c = component} update={this.update}/> <br/>
                 <Button text={2}>&hearts; React</Button> <br/>
                 {/*<button onClick={this.update}>{this.state.val * this.state.m}</button>*/}
                 <button onClick={this.update}>{this.props.value}</button>
+                <br/>
+                {/*{items.map(item => <h4 key={item.name}>{item.name}</h4>)}*/}
+                <input type="text" onChange={this.filter}/>
+                {items.map(item => <Person key={item.name} person={item}/>)}
             </div>
         );
     }
@@ -120,6 +139,8 @@ class Wrapper extends Component {
         )
     }
 }
+
+const Person = (props) => <h4>{props.person.name}</h4>;
 
 // const Widget = (props) => {
 //     return (

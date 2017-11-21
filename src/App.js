@@ -2,6 +2,27 @@ import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 import PropTypes from 'prop-types';
 
+const HOC = (InnerComponent) => class extends Component {
+    constructor() {
+        super();
+        this.state = {count: 0};
+    }
+
+    update() {
+        this.setState({count: this.state.count + 1});
+    }
+
+    componentWillMount() {
+        console.log('hoc');
+    }
+
+    render() {
+        return (
+            <InnerComponent {...this.props} {...this.state} update={this.update.bind(this)} />
+        )
+    }
+}
+
 class App extends Component {
     constructor() {
         super();
@@ -64,7 +85,7 @@ class App extends Component {
         console.log(this.state.increasing);
         let items = this.state.items;
 
-        if(this.state.filter){
+        if (this.state.filter) {
             items = items.filter(item => item.name.toLowerCase().includes(this.state.filter.toLowerCase()));
         }
         return (
@@ -75,6 +96,8 @@ class App extends Component {
                 <b>{this.props.cat}</b> <br/>
                 <Widget ref={component => this.c = component} update={this.update}/> <br/>
                 <Button text={2}>&hearts; React</Button> <br/>
+                <LabelHOC>This is label</LabelHOC>
+                <br/>
                 {/*<button onClick={this.update}>{this.state.val * this.state.m}</button>*/}
                 <button onClick={this.update}>{this.props.value}</button>
                 <br/>
@@ -109,6 +132,18 @@ class App extends Component {
     componentWillUnmount() {
         console.log('componentWillUnmount');
         // clearInterval(this.inc);
+    }
+}
+
+class Label extends Component {
+    componentWillMount() {
+        console.log('label');
+    }
+
+    render() {
+        return (
+            <label onMouseMove={this.props.update}>{this.props.children}----{this.props.count}</label>
+        )
     }
 }
 
@@ -147,10 +182,8 @@ const Person = (props) => <h4>{props.person.name}</h4>;
 //         <input ref="input" type="text" onChange={props.update}/>
 //     )
 // }
-
-const Button = (props) => {
-    return <button>{props.children}--{props.text}</button>
-}
+const LabelHOC = HOC(Label);
+const Button = HOC((props) => <button onClick={props.update}>{props.children}--{props.text}--{props.count}</button>);
 
 Button.propTypes = {
     text(props, propName, component){

@@ -18,7 +18,7 @@ const HOC = (InnerComponent) => class extends Component {
 
     render() {
         return (
-            <InnerComponent {...this.props} {...this.state} update={this.update.bind(this)} />
+            <InnerComponent {...this.props} {...this.state} update={this.update.bind(this)}/>
         )
     }
 }
@@ -98,6 +98,11 @@ class App extends Component {
                 <Button text={2}>&hearts; React</Button> <br/>
                 <LabelHOC>This is label</LabelHOC>
                 <br/>
+                <Parent>
+                    <div className="childA"></div>
+                    {/*<div className="childB"></div>*/}
+                </Parent>
+                <br/>
                 {/*<button onClick={this.update}>{this.state.val * this.state.m}</button>*/}
                 <button onClick={this.update}>{this.props.value}</button>
                 <br/>
@@ -135,14 +140,33 @@ class App extends Component {
     }
 }
 
+class Parent extends Component {
+    render() {
+        // let items = this.props.children.map(child => child);
+        // let items = React.Children.map(this.props.children, child=>child);
+        // let items = React.Children.toArray(this.props.children);
+        // let items = React.Children.forEach(this.props.children, child => console.log(child.props.className));
+        let items = React.Children.only(this.props.children);
+
+        console.log(items);
+        return null;
+    }
+}
+
 class Label extends Component {
+    constructor() {
+        super();
+        this.state = {message: 'hello'};
+    }
+
     componentWillMount() {
         console.log('label');
     }
 
     render() {
         return (
-            <label onMouseMove={this.props.update}>{this.props.children}----{this.props.count}</label>
+            <label
+                onMouseMove={this.props.update}>{this.props.children}--{this.props.count}--{this.state.message}</label>
         )
     }
 }

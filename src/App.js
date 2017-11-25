@@ -140,6 +140,42 @@ class App extends Component {
     }
 }
 
+
+class Main extends Component {
+    render() {
+        return (
+            <Buttons>
+                <button value="A">A</button>
+                <button value="B">B</button>
+                <button value="C">C</button>
+            </Buttons>
+        )
+    }
+}
+
+class Buttons extends Component {
+    constructor() {
+        super();
+        this.state = {selected: 'None'};
+    }
+
+    selectItem(selected) {
+        this.setState({selected});
+    }
+
+    render() {
+        // let items = this.props.children;
+        let fn = child => React.cloneElement(child, {onClick: this.selectItem.bind(this, child.props.value)});
+        let items = React.Children.map(this.props.children, fn);
+        return (
+            <div>
+                <h2>You have selected : {this.state.selected}</h2>
+                {items}
+            </div>
+        )
+    }
+}
+
 class Parent extends Component {
     render() {
         // let items = this.props.children.map(child => child);
@@ -181,7 +217,7 @@ class Widget extends Component {
 
 class Wrapper extends Component {
     mount() {
-        ReactDOM.render(<App />, document.getElementById('b'));
+        ReactDOM.render(<Main />, document.getElementById('b'));
     }
 
     unmount() {
